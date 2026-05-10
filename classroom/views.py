@@ -1,7 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.views import generic
-from django.views.generic import View, TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView
-from django.utils.decorators import method_decorator
+from django.views.generic import DetailView
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
@@ -128,7 +126,23 @@ def user_logout(request):
 
 
 # =========================
-# ASSIGNMENTS (FIXED PART 🔥)
+# CLASS-BASED VIEWS (FIXED MISSING ERROR)
+# =========================
+
+class StudentDetailView(LoginRequiredMixin, DetailView):
+    model = Student
+    context_object_name = "student"
+    template_name = "classroom/student_detail_page.html"
+
+
+class TeacherDetailView(LoginRequiredMixin, DetailView):
+    model = Teacher
+    context_object_name = "teacher"
+    template_name = "classroom/teacher_detail_page.html"
+
+
+# =========================
+# ASSIGNMENTS (FIXED)
 # =========================
 
 @login_required
@@ -144,7 +158,6 @@ def upload_assignment(request):
             upload.teacher = teacher
             upload.save()
 
-            # attach students in teacher's class
             students = Student.objects.filter(user_student_name__teacher=teacher)
             upload.student.add(*students)
 
@@ -158,7 +171,7 @@ def upload_assignment(request):
     })
 
 
-# ✅ FIXED: Student now sees actual assignments
+# ✅ FIXED: Student sees actual assignments
 @login_required
 def class_assignment(request):
     student = request.user.Student
@@ -171,7 +184,7 @@ def class_assignment(request):
     })
 
 
-# ✅ FIXED: Teacher sees only their assignments
+# ✅ FIXED: Teacher sees their assignments
 @login_required
 def assignment_list(request):
     teacher = request.user.Teacher
@@ -185,12 +198,12 @@ def assignment_list(request):
 
 
 @login_required
-def update_assignment(request, id=None):
+def update_assignment(request, id):
     obj = get_object_or_404(ClassAssignment, id=id)
     form = AssignmentForm(request.POST or None, request.FILES or None, instance=obj)
 
     if form.is_valid():
-        obj = form.save()
+        form.save()
         messages.success(request, "Assignment Updated")
         return redirect('classroom:assignment_list')
 
@@ -198,7 +211,7 @@ def update_assignment(request, id=None):
 
 
 @login_required
-def assignment_delete(request, id=None):
+def assignment_delete(request, id):
     obj = get_object_or_404(ClassAssignment, id=id)
 
     if request.method == "POST":
@@ -210,11 +223,11 @@ def assignment_delete(request, id=None):
 
 
 # =========================
-# STUDENT SUBMISSION
+# SUBMISSION
 # =========================
 
 @login_required
-def submit_assignment(request, id=None):
+def submit_assignment(request, id):
     student = request.user.Student
     assignment = get_object_or_404(ClassAssignment, id=id)
     teacher = assignment.teacher
