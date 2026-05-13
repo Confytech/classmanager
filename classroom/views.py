@@ -202,7 +202,7 @@ def class_students_list(request):
         teacher=teacher
     ).values_list("student_id", flat=True)
 
-    students = Student.objects.filter(id__in=student_ids)
+    students = Student.objects.filter(user_id__in=student_ids)
 
     return render(request, "classroom/class_students_list.html", {
         "class_students_list": students
@@ -385,22 +385,40 @@ def class_notice(request, pk):
 @login_required
 def upload_assignment(request):
 
+    teacher = get_object_or_404(
+        Teacher,
+        user=request.user
+    )
+
     form = AssignmentForm(
         request.POST or None,
         request.FILES or None
     )
 
     if form.is_valid():
-        form.save()
 
-        messages.success(request, "Assignment uploaded successfully")
+        assignment = form.save(commit=False)
+
+        assignment.teacher = teacher
+
+        assignment.save()
+
+        form.save_m2m()
+
+        messages.success(
+            request,
+            "Assignment uploaded successfully"
+        )
 
         return redirect("classroom:assignment_list")
 
-    return render(request, "classroom/upload_assignment.html", {
-        "form": form
-    })
-
+    return render(
+        request,
+        "classroom/upload_assignment.html",
+        {
+            "form": form
+        }
+    )
 
 @login_required
 def class_assignment(request):
