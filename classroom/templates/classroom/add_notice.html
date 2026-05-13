@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Notice</title>
+</head>
+<body>
+
+<h2>Write Class Notice</h2>
+
+<form method="POST">
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <button type="submit">Post Notice</button>
+</form>
+
+<br>
+
+<a href="/">Back Home</a>
+
+</body>
+</html>
