@@ -71,14 +71,14 @@ class NoticeForm(forms.ModelForm):
 ## Form for uploading or updating assignment (teachers only)       
 class AssignmentForm(forms.ModelForm):
 
+    students = forms.ModelMultipleChoiceField(
+        queryset=Student.objects.all(),
+        widget=forms.CheckboxSelectMultiple
+    )
+
     class Meta():
         model = ClassAssignment
-
-        fields = [
-            'students',
-            'assignment_name',
-            'assignment'
-        ]
+        fields = ['students', 'assignment_name', 'assignment']
         
 ## Form for submitting assignment (Students only)        
 class SubmitForm(forms.ModelForm):

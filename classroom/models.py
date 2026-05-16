@@ -123,12 +123,6 @@ class ClassAssignment(models.Model):
     class Meta:
         ordering = ['-created_at']
 
-    def __str__(self):
-        return self.assignment_name
-
-    class Meta:
-        ordering = ['-created_at']
-
 class SubmitAssignment(models.Model):
     student = models.ForeignKey(Student,related_name='student_submit',on_delete=models.CASCADE)
     teacher = models.ForeignKey(Teacher,related_name='teacher_submit',on_delete=models.CASCADE)

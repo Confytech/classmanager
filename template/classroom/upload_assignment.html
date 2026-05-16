@@ -1,18 +1,57 @@
 {% extends 'classroom/base.html' %}
-{% load bootstrap4 %}
+
 {% block content %}
+
 <div class="container">
-<div class="jumbotron">
-  {% if assignment_uploaded %}
-  <h1>Assignment is uploaded successfully.</h1>
-  {% else %}
-  <h1>Upload Assignment</h1>
-  <form enctype="multipart/form-data" method="post">
-    {% csrf_token %}
-    {% bootstrap_form form %}
-    <input type="submit" class="btn btn-danger" name="" value="Upload">
-  </form>
-  {% endif %}
+
+    <div class="jumbotron">
+
+        <h1>Upload Assignment</h1>
+
+        <form enctype="multipart/form-data" method="post">
+
+            {% csrf_token %}
+
+            <div class="form-group">
+
+                <label>Select Students</label>
+
+                {{ form.students }}
+
+            </div>
+
+            <br>
+
+            <div class="form-group">
+
+                <label>Assignment Name</label>
+
+                {{ form.assignment_name }}
+
+            </div>
+
+            <br>
+
+            <div class="form-group">
+
+                <label>Upload Assignment</label>
+
+                {{ form.assignment }}
+
+            </div>
+
+            <br>
+
+            <input
+                type="submit"
+                class="btn btn-danger"
+                value="Upload"
+            >
+
+        </form>
+
+    </div>
+
 </div>
-</div>
+
 {% endblock %}
