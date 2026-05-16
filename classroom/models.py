@@ -99,11 +99,29 @@ class ClassNotice(models.Model):
         unique_together = ['teacher','message']
 
 class ClassAssignment(models.Model):
-    student = models.ManyToManyField(Student,related_name='student_assignment')
-    teacher = models.ForeignKey(Teacher,related_name='teacher_assignment',on_delete=models.CASCADE)
+
+    students = models.ManyToManyField(
+        Student,
+        related_name='student_assignments'
+    )
+
+    teacher = models.ForeignKey(
+        Teacher,
+        related_name='teacher_assignment',
+        on_delete=models.CASCADE
+    )
+
     created_at = models.DateTimeField(auto_now=True)
+
     assignment_name = models.CharField(max_length=250)
+
     assignment = models.FileField(upload_to='assignments')
+
+    def __str__(self):
+        return self.assignment_name
+
+    class Meta:
+        ordering = ['-created_at']
 
     def __str__(self):
         return self.assignment_name

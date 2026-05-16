@@ -70,10 +70,16 @@ class NoticeForm(forms.ModelForm):
 
 ## Form for uploading or updating assignment (teachers only)       
 class AssignmentForm(forms.ModelForm):
+
     class Meta():
         model = ClassAssignment
-        fields = ['assignment_name','assignment']
 
+        fields = [
+            'students',
+            'assignment_name',
+            'assignment'
+        ]
+        
 ## Form for submitting assignment (Students only)        
 class SubmitForm(forms.ModelForm):
     class Meta():

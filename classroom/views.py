@@ -390,27 +390,33 @@ def upload_assignment(request):
         user=request.user
     )
 
-    form = AssignmentForm(
-        request.POST or None,
-        request.FILES or None
-    )
+    if request.method == "POST":
 
-    if form.is_valid():
-
-        assignment = form.save(commit=False)
-
-        assignment.teacher = teacher
-
-        assignment.save()
-
-        form.save_m2m()
-
-        messages.success(
-            request,
-            "Assignment uploaded successfully"
+        form = AssignmentForm(
+            request.POST,
+            request.FILES
         )
 
-        return redirect("classroom:assignment_list")
+        if form.is_valid():
+
+            assignment = form.save(commit=False)
+
+            assignment.teacher = teacher
+
+            assignment.save()
+
+            form.save_m2m()
+
+            messages.success(
+                request,
+                "Assignment uploaded successfully"
+            )
+
+            return redirect("classroom:assignment_list")
+
+    else:
+
+        form = AssignmentForm()
 
     return render(
         request,
@@ -423,12 +429,21 @@ def upload_assignment(request):
 @login_required
 def class_assignment(request):
 
-    assignments = ClassAssignment.objects.all()
+    student = get_object_or_404(
+        Student,
+        user=request.user
+    )
 
-    return render(request, "classroom/class_assignment.html", {
-        "assignment_list": assignments
-    })
+    assignments = student.student_assignments.all()
 
+    return render(
+        request,
+        "classroom/class_assignment.html",
+        {
+            "student": student,
+            "assignment_list": assignments
+        }
+    )
 
 @login_required
 def assignment_list(request):
